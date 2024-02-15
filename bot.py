@@ -1,8 +1,6 @@
-import telebot
 from telebot import types
 from telebot.async_telebot import AsyncTeleBot
 import logging
-import aiohttp
 import asyncio
 import freecurrencyapi
 import os
@@ -42,7 +40,7 @@ async def send_welcome(message):
 @bot.message_handler(commands=["help"])
 async def send_help(message):
     logging.info(f"User {message.from_user.id} called {message.text}")
-    help_text = "Доступные команды:\n/start - начало работы\n/help - помощь\n/convert <сумма> <из_валюты> to <в_валюту> - конвертация валют\n/currencies - Список валют, доступных для пересчета"
+    help_text = "Доступные команды:\n/start - начало работы\n/help - помощь\n/convert <сумма> <из_валюты> to <в_валюту> - конвертация валют\n/currencies - Список валют, доступных для конвертации"
     await bot.reply_to(message, help_text)
 
 
@@ -77,8 +75,9 @@ async def convert_currency(message):
 # список доступных для пересчёта валют
 @bot.message_handler(commands=["currencies"])
 async def send_currencies(message):
+    logging.info(f"User {message.from_user.id} called {message.text}")
     currency_list = """
-Доступные валюты для обмена:
+Доступные валюты для конвертации:
 
 - EUR: Euro
 - USD: US Dollar
@@ -120,6 +119,7 @@ async def send_currencies(message):
 # приветствие и прощание или help
 @bot.message_handler(func=lambda message: True)
 async def greet_goodbye(message):
+    logging.info(f"User {message.from_user.id} called {message.text}")
     text = message.text.lower()
     if any(
         greeting in text
