@@ -8,12 +8,13 @@ import freecurrencyapi
 import os
 from dotenv import load_dotenv
 
-# Загрузка переменных окружения
+# загрузка переменных окружения
 load_dotenv()
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 bot = AsyncTeleBot(TELEGRAM_BOT_TOKEN)
 
+# настройки логгирования
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -24,6 +25,7 @@ logging.basicConfig(
 
 logging.info("Bot started")
 
+# создание подключения к freecurrencyapi
 FREECURRENCYAPI_KEY = os.getenv("FREECURRENCYAPI_KEY")
 client = freecurrencyapi.Client(FREECURRENCYAPI_KEY)
 
@@ -58,7 +60,7 @@ async def convert_currency(message):
             )
         amount, from_currency, _, to_currency = params
 
-        # Получение последних курсов обмена
+        # последние курсы обмена
         result = client.latest(base_currency=from_currency, currencies=[to_currency])
         rate = result["data"][to_currency]
 
@@ -72,6 +74,7 @@ async def convert_currency(message):
         await bot.reply_to(message, "Произошла ошибка при конвертации валют.")
 
 
+# список доступных для пересчёта валют
 @bot.message_handler(commands=["currencies"])
 async def send_currencies(message):
     currency_list = """
@@ -114,9 +117,9 @@ async def send_currencies(message):
     await bot.reply_to(message, currency_list)
 
 
+# приветствие и прощание или help
 @bot.message_handler(func=lambda message: True)
 async def greet_goodbye(message):
-    # Пример простой логики для определения приветствия или прощания
     text = message.text.lower()
     if any(
         greeting in text
